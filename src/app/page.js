@@ -136,7 +136,7 @@ export default async function Page() {
             <div className="mt-6 flex flex-col gap-2">
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>When </span>
-                <span className="font-mono">{new Date(launch.net).toLocaleDateString()} {new Date(launch.net).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span>
+                <span className="font-mono">{new Date(launch.net).toLocaleDateString('en-US', { day: '2-digit', month: 'long' })} at {new Date(launch.net).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span>
               </div>
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>Where </span>
