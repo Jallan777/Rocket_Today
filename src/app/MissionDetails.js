@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 
-export default function MissionDetails({ description }) {
+export default function MissionDetails({ description, isYesPage }) {
   const scrollRef = useRef(null);
 
   if (!description) return null;
@@ -30,24 +30,32 @@ export default function MissionDetails({ description }) {
           {description}
         </div>
         {/* Fading overlays for elegance */}
-        <div style={{
-          pointerEvents: 'none',
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          height: '18px',
-          background: 'linear-gradient(to bottom, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))',
-        }} />
-        <div style={{
-          pointerEvents: 'none',
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: '18px',
-          background: 'linear-gradient(to top, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))',
-        }} />
+        <div
+          style={{
+            pointerEvents: "none",
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            height: "18px",
+            background: isYesPage
+              ? "linear-gradient(to bottom, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))"
+              : "linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))",
+          }}
+        />
+        <div
+          style={{
+            pointerEvents: "none",
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: "18px",
+            background: isYesPage
+              ? "linear-gradient(to top, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))"
+              : "linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))",
+          }}
+        />
         <style>{`
           .mission-details-scroll::-webkit-scrollbar {
             width: 8px;
