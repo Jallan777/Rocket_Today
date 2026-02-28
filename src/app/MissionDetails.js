@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 
-export default function MissionDetails({ description, isYesPage }) {
+export default function MissionDetails({ description, isYesPage, nextLaunchDateTime }) {
   const scrollRef = useRef(null);
 
   if (!description) return null;
@@ -74,6 +74,12 @@ export default function MissionDetails({ description, isYesPage }) {
           }
         `}</style>
       </div>
+      {!isYesPage && nextLaunchDateTime && (
+        <div className="mt-3">
+          <span className="font-bold">When: </span>
+          <span>{nextLaunchDateTime}</span>
+        </div>
+      )}
     </div>
   );
 }
