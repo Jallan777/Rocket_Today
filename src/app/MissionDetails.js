@@ -6,6 +6,8 @@ export default function MissionDetails({ description, isYesPage }) {
 
   if (!description) return null;
 
+  const missionDetailsBackground = "rgba(255, 255, 255, 0.1)"; // Match the background color of the mission details box
+
   return (
     <div className="border-t border-white/10 pt-3 text-left">
       <span className="font-bold block mb-1">Details</span>
@@ -40,7 +42,7 @@ export default function MissionDetails({ description, isYesPage }) {
             height: "18px",
             background: isYesPage
               ? "linear-gradient(to bottom, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))"
-              : "linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))",
+              : `linear-gradient(to bottom, ${missionDetailsBackground}, rgba(0, 0, 0, 0))`,
           }}
         />
         <div
@@ -53,7 +55,7 @@ export default function MissionDetails({ description, isYesPage }) {
             height: "18px",
             background: isYesPage
               ? "linear-gradient(to top, rgba(55, 119, 229, 0.75), rgba(39, 89, 255, 0))"
-              : "linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))",
+              : `linear-gradient(to top, ${missionDetailsBackground}, rgba(0, 0, 0, 0))`,
           }}
         />
         <style>{`
