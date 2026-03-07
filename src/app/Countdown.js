@@ -25,7 +25,11 @@ export default function Countdown({ targetDate }) {
                 return;
             }
 
-            setTimeLeft(`${distance}ms`);
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
         }, 1000);
 
         return () => clearInterval(interval);
