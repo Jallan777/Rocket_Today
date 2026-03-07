@@ -83,10 +83,10 @@ export default async function Page() {
       if (launch.name && launch.pad?.location?.name) dynamicTexts.push(`${launch.name} launching from ${launch.pad.location.name}`);
       if (launch.name && launch.mission?.orbit?.name) dynamicTexts.push(`${launch.name} targeting orbit: ${launch.mission.orbit.name}`);
       if (launch.name && launch.window_start) {
-        dynamicTexts.push(`${launch.name} window opens at: ${convertToLocalTime(launch.window_start)}`);
+        dynamicTexts.push(`${launch.name} window opens at: ${new Date(launch.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
       }
       if (launch.name && launch.window_end) {
-        dynamicTexts.push(`${launch.name} window closes at: ${convertToLocalTime(launch.window_end)}`);
+        dynamicTexts.push(`${launch.name} window closes at: ${new Date(launch.window_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
       }
       // fallback simple facts
       if (launch.name) dynamicTexts.push(`Today’s rocket: ${launch.name}`);
@@ -146,7 +146,7 @@ export default async function Page() {
             <div className="mt-6 flex flex-col gap-2">
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>When </span>
-                <span className="font-mono">{convertToLocalTime(launch.net)}</span>
+                <span className="font-mono">{new Date(launch.net).toLocaleDateString('en-US', { day: '2-digit', month: 'long' })} at {new Date(launch.net).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span>
               </div>
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>Where </span>
