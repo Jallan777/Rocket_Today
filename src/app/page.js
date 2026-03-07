@@ -1,14 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import MissionDetails from './MissionDetails';
 import Countdown from './Countdown';
 
-//This function fetches the data on the server every time the page is visited
+//This function fetches the data on the client
 async function getLaunchData() {
   try{
-    const res = await fetch('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=1&status=1', {
-      next: { revalidate: 3600 } //Hourly refresh
-    });
-
+    const res = await fetch('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=1&status=1');
     if(!res.ok) throw new Error('Failed to fetch');
     return res.json();
   } catch (err) {
@@ -16,10 +15,43 @@ async function getLaunchData() {
   }
 }
 
-export default async function Page() {
-  
-  const data = await getLaunchData();
-  const launch = data?.results?.[0];
+export default function Page() {
+  const [launch, setLaunch] = useState(null);
+  const [selectedTimezone, setSelectedTimezone] = useState('UTC');
+
+  useEffect(() => {
+    getLaunchData().then(data => {
+      setLaunch(data?.results?.[0] || null);
+    });
+  }, []);
+
+  // List of timezones
+  const timezones = [
+    { value: 'UTC', label: 'UTC' },
+    { value: 'America/New_York', label: 'Eastern Time (ET)' },
+    { value: 'America/Chicago', label: 'Central Time (CT)' },
+    { value: 'America/Denver', label: 'Mountain Time (MT)' },
+    { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+    { value: 'Europe/London', label: 'London (GMT/BST)' },
+    { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+    { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+    { value: 'Australia/Sydney', label: 'Sydney (AEDT/AEST)' },
+    { value: 'Pacific/Auckland', label: 'New Zealand (NZT)' },
+  ];
+
+  // Function to convert UTC time to selected timezone
+  const convertTime = (utcDateString) => {
+    if (!utcDateString) return '';
+    const date = new Date(utcDateString);
+    return date.toLocaleString('en-US', { timeZone: selectedTimezone, hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Function to convert date to selected timezone
+  const convertDate = (utcDateString) => {
+    if (!utcDateString) return '';
+    const date = new Date(utcDateString);
+    return date.toLocaleDateString('en-US', { timeZone: selectedTimezone, day: '2-digit', month: 'long' });
+  };
   
   // List of static quotes, facts, and fun texts
     const staticTexts = [
@@ -76,8 +108,8 @@ export default async function Page() {
       if (launch.name && launch.launch_service_provider?.name) dynamicTexts.push(`${launch.name} by ${launch.launch_service_provider.name}`);
       if (launch.name && launch.pad?.location?.name) dynamicTexts.push(`${launch.name} launching from ${launch.pad.location.name}`);
       if (launch.name && launch.mission?.orbit?.name) dynamicTexts.push(`${launch.name} targeting orbit: ${launch.mission.orbit.name}`);
-      if (launch.name && launch.window_start) dynamicTexts.push(`${launch.name} window opens at: ${new Date(launch.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
-      if (launch.name && launch.window_end) dynamicTexts.push(`${launch.name} window closes at: ${new Date(launch.window_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
+      if (launch.name && launch.window_start) dynamicTexts.push(`${launch.name} window opens at: ${convertTime(launch.window_start)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
+      if (launch.name && launch.window_end) dynamicTexts.push(`${launch.name} window closes at: ${convertTime(launch.window_end)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
       // fallback simple facts
       if (launch.name) dynamicTexts.push(`Today’s rocket: ${launch.name}`);
       if (launch.launch_service_provider?.name) dynamicTexts.push(`Launch provider: ${launch.launch_service_provider.name}`);
@@ -86,8 +118,8 @@ export default async function Page() {
       if (launch.mission?.type) dynamicTexts.push(`Payload type: ${launch.mission.type}`);
       if (launch.mission?.orbit?.name) dynamicTexts.push(`Target orbit: ${launch.mission.orbit.name}`);
       if (launch.mission?.name) dynamicTexts.push(`Mission name: ${launch.mission.name}`);
-      if (launch.window_start) dynamicTexts.push(`Window opens at: ${new Date(launch.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
-      if (launch.window_end) dynamicTexts.push(`Window closes at: ${new Date(launch.window_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
+      if (launch.window_start) dynamicTexts.push(`Window opens at: ${convertTime(launch.window_start)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
+      if (launch.window_end) dynamicTexts.push(`Window closes at: ${convertTime(launch.window_end)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
     }
 
     // Randomly select from static or dynamic
@@ -116,6 +148,21 @@ export default async function Page() {
           {isToday ? 'YES.' : 'NO.'}
         </h1>
 
+        {/* TIMEZONE SELECTOR */}
+        <div className="mb-4">
+          <label htmlFor="timezone-select" className="text-white/80 text-sm mr-2">Select Timezone:</label>
+          <select
+            id="timezone-select"
+            value={selectedTimezone}
+            onChange={(e) => setSelectedTimezone(e.target.value)}
+            className="bg-white/10 text-white border border-white/20 rounded px-2 py-1"
+          >
+            {timezones.map(tz => (
+              <option key={tz.value} value={tz.value}>{tz.label}</option>
+            ))}
+          </select>
+        </div>
+
         {/* COUNTDOWN TIMER */}
         {launch && isToday && (
           <div className="countdown-timer">
@@ -140,7 +187,7 @@ export default async function Page() {
             <div className="mt-6 flex flex-col gap-2">
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>When </span>
-                <span className="font-mono">{new Date(launch.net).toLocaleDateString('en-US', { day: '2-digit', month: 'long' })} at {new Date(launch.net).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC</span>
+                <span className="font-mono">{convertDate(launch.net)} at {convertTime(launch.net)} {timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}</span>
               </div>
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>Where </span>
