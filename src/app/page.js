@@ -52,6 +52,15 @@ export default function Page() {
     const date = new Date(utcDateString);
     return date.toLocaleDateString('en-US', { timeZone: selectedTimezone, day: '2-digit', month: 'long' });
   };
+
+  // Function to get timezone abbreviation
+  const getTimezoneAbbrev = () => {
+    const tz = timezones.find(t => t.value === selectedTimezone);
+    if (!tz) return selectedTimezone;
+    if (selectedTimezone === 'UTC') return 'UTC';
+    const match = tz.label.match(/\(([^)]+)\)/);
+    return match ? match[1] : tz.label;
+  };
   
   // List of static quotes, facts, and fun texts
     const staticTexts = [
@@ -108,8 +117,8 @@ export default function Page() {
       if (launch.name && launch.launch_service_provider?.name) dynamicTexts.push(`${launch.name} by ${launch.launch_service_provider.name}`);
       if (launch.name && launch.pad?.location?.name) dynamicTexts.push(`${launch.name} launching from ${launch.pad.location.name}`);
       if (launch.name && launch.mission?.orbit?.name) dynamicTexts.push(`${launch.name} targeting orbit: ${launch.mission.orbit.name}`);
-      if (launch.name && launch.window_start) dynamicTexts.push(`${launch.name} window opens at: ${convertTime(launch.window_start)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
-      if (launch.name && launch.window_end) dynamicTexts.push(`${launch.name} window closes at: ${convertTime(launch.window_end)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
+      if (launch.name && launch.window_start) dynamicTexts.push(`${launch.name} window opens at: ${convertTime(launch.window_start)} ${getTimezoneAbbrev()}`);
+      if (launch.name && launch.window_end) dynamicTexts.push(`${launch.name} window closes at: ${convertTime(launch.window_end)} ${getTimezoneAbbrev()}`);
       // fallback simple facts
       if (launch.name) dynamicTexts.push(`Today’s rocket: ${launch.name}`);
       if (launch.launch_service_provider?.name) dynamicTexts.push(`Launch provider: ${launch.launch_service_provider.name}`);
@@ -118,8 +127,8 @@ export default function Page() {
       if (launch.mission?.type) dynamicTexts.push(`Payload type: ${launch.mission.type}`);
       if (launch.mission?.orbit?.name) dynamicTexts.push(`Target orbit: ${launch.mission.orbit.name}`);
       if (launch.mission?.name) dynamicTexts.push(`Mission name: ${launch.mission.name}`);
-      if (launch.window_start) dynamicTexts.push(`Window opens at: ${convertTime(launch.window_start)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
-      if (launch.window_end) dynamicTexts.push(`Window closes at: ${convertTime(launch.window_end)} ${timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}`);
+      if (launch.window_start) dynamicTexts.push(`Window opens at: ${convertTime(launch.window_start)} ${getTimezoneAbbrev()}`);
+      if (launch.window_end) dynamicTexts.push(`Window closes at: ${convertTime(launch.window_end)} ${getTimezoneAbbrev()}`);
     }
 
     // Randomly select from static or dynamic
@@ -155,7 +164,7 @@ export default function Page() {
             id="timezone-select"
             value={selectedTimezone}
             onChange={(e) => setSelectedTimezone(e.target.value)}
-            className="bg-white/10 text-white border border-white/20 rounded px-2 py-1"
+            className="bg-white/10 text-black border border-white/20 rounded px-2 py-1"
           >
             {timezones.map(tz => (
               <option key={tz.value} value={tz.value}>{tz.label}</option>
@@ -187,7 +196,7 @@ export default function Page() {
             <div className="mt-6 flex flex-col gap-2">
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>When </span>
-                <span className="font-mono">{convertDate(launch.net)} at {convertTime(launch.net)} {timezones.find(tz => tz.value === selectedTimezone)?.label || selectedTimezone}</span>
+                <span className="font-mono">{convertDate(launch.net)} at {convertTime(launch.net)} {getTimezoneAbbrev()}</span>
               </div>
               <div className={`flex justify-between border-b pb-2 ${isToday ? 'border-teal-200' : 'border-white/10'}`}> 
                 <span className={`opacity-50 ${isToday ? 'text-teal-100' : ''}`}>Where </span>
