@@ -16,6 +16,12 @@ async function getLaunchData() {
   }
 }
 
+// Update the helper function to handle any timezone
+function convertToLocalTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString([], { timeZoneName: 'short' });
+}
+
 export default async function Page() {
   
   const data = await getLaunchData();
@@ -76,8 +82,12 @@ export default async function Page() {
       if (launch.name && launch.launch_service_provider?.name) dynamicTexts.push(`${launch.name} by ${launch.launch_service_provider.name}`);
       if (launch.name && launch.pad?.location?.name) dynamicTexts.push(`${launch.name} launching from ${launch.pad.location.name}`);
       if (launch.name && launch.mission?.orbit?.name) dynamicTexts.push(`${launch.name} targeting orbit: ${launch.mission.orbit.name}`);
-      if (launch.name && launch.window_start) dynamicTexts.push(`${launch.name} window opens at: ${new Date(launch.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
-      if (launch.name && launch.window_end) dynamicTexts.push(`${launch.name} window closes at: ${new Date(launch.window_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} UTC`);
+      if (launch.name && launch.window_start) {
+        dynamicTexts.push(`${launch.name} window opens at: ${convertToLocalTime(launch.window_start)}`);
+      }
+      if (launch.name && launch.window_end) {
+        dynamicTexts.push(`${launch.name} window closes at: ${convertToLocalTime(launch.window_end)}`);
+      }
       // fallback simple facts
       if (launch.name) dynamicTexts.push(`Today’s rocket: ${launch.name}`);
       if (launch.launch_service_provider?.name) dynamicTexts.push(`Launch provider: ${launch.launch_service_provider.name}`);
