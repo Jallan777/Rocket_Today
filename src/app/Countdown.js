@@ -35,18 +35,8 @@ export default function Countdown({ targetDate }) {
         return () => clearInterval(interval);
     }, [targetDate]);
 
-    // Update the helper function to handle any timezone
-    function convertToLocalTime(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleString([], { timeZoneName: 'short' });
-    }
-
-    // Display the target date in local time
-    const targetLocalTime = targetDate ? convertToLocalTime(targetDate) : null;
-
     return (
         <div className="countdown-timer mt-4">
-            {targetLocalTime && <div className="target-time">Target Time: {targetLocalTime}</div>}
             T-MINUS {timeLeft}
         </div>
     );
