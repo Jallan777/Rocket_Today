@@ -23,6 +23,13 @@ export default function Page() {
     getLaunchData().then(data => {
       setLaunch(data?.results?.[0] || null);
     });
+
+    // Auto-detect user's timezone
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const matchingTz = timezones.find(tz => tz.value === userTimezone);
+    if (matchingTz) {
+      setSelectedTimezone(userTimezone);
+    }
   }, []);
 
   // List of timezones
@@ -32,11 +39,26 @@ export default function Page() {
     { value: 'America/Chicago', label: 'Central Time (CT)' },
     { value: 'America/Denver', label: 'Mountain Time (MT)' },
     { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
-    { value: 'Europe/London', label: 'London (GMT/BST)' },
-    { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
-    { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-    { value: 'Australia/Sydney', label: 'Sydney (AEDT/AEST)' },
-    { value: 'Pacific/Auckland', label: 'New Zealand (NZT)' },
+    { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
+    { value: 'Pacific/Honolulu', label: 'Hawaii Time (HST)' },
+    { value: 'America/Halifax', label: 'Atlantic Time (AST)' },
+    { value: 'America/St_Johns', label: 'Newfoundland Time (NST)' },
+    { value: 'Europe/London', label: 'Greenwich Mean Time (GMT)' },
+    { value: 'Europe/Paris', label: 'Central European Time (CET)' },
+    { value: 'Europe/Athens', label: 'Eastern European Time (EET)' },
+    { value: 'Europe/Moscow', label: 'Moscow Time (MSK)' },
+    { value: 'Asia/Kolkata', label: 'India Time (IST)' },
+    { value: 'Asia/Shanghai', label: 'China Time (CST)' },
+    { value: 'Asia/Tokyo', label: 'Japan Time (JST)' },
+    { value: 'Asia/Seoul', label: 'Korea Time (KST)' },
+    { value: 'Australia/Sydney', label: 'Australian Eastern Time (AEST)' },
+    { value: 'Australia/Adelaide', label: 'Australian Central Time (ACST)' },
+    { value: 'Australia/Perth', label: 'Australian Western Time (AWST)' },
+    { value: 'Pacific/Auckland', label: 'New Zealand Time (NZT)' },
+    { value: 'Africa/Johannesburg', label: 'South Africa Time (SAST)' },
+    { value: 'America/Sao_Paulo', label: 'Brazil Time (BRT)' },
+    { value: 'America/Argentina/Buenos_Aires', label: 'Argentina Time (ART)' },
+    { value: 'America/Mexico_City', label: 'Mexico Time (CST)' },
   ];
 
   // Function to convert UTC time to selected timezone
